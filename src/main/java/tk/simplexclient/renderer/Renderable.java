@@ -66,11 +66,7 @@ public class Renderable {
         this.x = x;
         this.y = y;
 
-        if(this.renderBackground) {
-            vr.drawRoundedRectangle(x, y, width, height, 3 , this.backgroundColor);
-        }
-
-        this.render.run();
+        this.render();
 
         this.x = xx;
         this.y = yy;
