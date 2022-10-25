@@ -1,156 +1,154 @@
 package tk.simplexclient.ui;
 
-import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
 import tk.simplexclient.SimplexClient;
-import tk.simplexclient.module.hud.IRenderConfig;
-import tk.simplexclient.module.hud.IRenderer;
-import tk.simplexclient.module.hud.ScreenPosition;
+import tk.simplexclient.module.HUDModule;
+import tk.simplexclient.renderer.Renderable;
 import tk.simplexclient.renderer.Renderer;
+import tk.simplexclient.ui.api.GuiComponent;
+import tk.simplexclient.ui.api.ScreenBridge;
+import tk.simplexclient.ui.api.impl.CheckBox;
+import tk.simplexclient.utils.Util;
 
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
-public class DraggableScreen extends Screen {
-
-    private final HashMap<IRenderer, ScreenPosition> renderers = new HashMap<>();
-
-    private Optional<IRenderer> selectedRenderer = Optional.empty();
-
-    private int prevX, prevY;
-
-    private Renderer simplexRenderer;
+public class DraggableScreen extends ScreenBridge {
+    public int moseX, moseY;
+    public Renderable movingMod;
+    boolean lastTickHolding = false;
+    public List<HUDModule> mods;
+    public boolean showSnapLines = false;
+    private boolean showDividerLines = false;
 
     public DraggableScreen() {
-        super(Component.translatable("Simplex draggable screen"));
+        this.mods = new ArrayList<>();
+        SimplexClient.getInstance().getModuleManager().modules.forEach(t -> {
+            if (t instanceof HUDModule)
+                mods.add((HUDModule) t);
+        });
 
-        simplexRenderer = SimplexClient.getInstance().getRenderer();
-
-        for (IRenderer renderer : SimplexClient.getInstance().getModuleManager().getEnabledRenderers()) {
-            if (!renderer.isEnabled()) continue;
-            ScreenPosition position = renderer.load();
-
-            if (position == null) {
-                position = ScreenPosition.fromRelativePosition(0.5f, 0.5f);
-            }
-
-            adjustBounds(renderer, position);
-            this.renderers.put(renderer, position);
+    }
+    
+    @Override
+    public void render(int mouseX, int mouseY, boolean leftClick, boolean rightClick, boolean middleClick) {
+        SimplexClient.getInstance().getRenderer().start();
+        for (HUDModule hud : mods) {
+            hud.render();
         }
 
-    }
+        if (leftClick && lastTickHolding) {
+            int finalX = (int) (mouseX - moseX);
+            int finalY = (int) (mouseY - moseY);
 
-    @Override
-    protected void init() {
-        renderers.forEach(this::adjustBounds);
-        Minecraft.getInstance().options.hideGui = true;
-        SimplexClient.getInstance().setInHud(true);
-        super.init();
-    }
+            for (HUDModule hud : mods) {
+                Renderable rend = hud.getRenderable();
+                    if (rend.equals(movingMod) || !hud.isEnabled())
+                        continue;
 
-    @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float f) {
-        simplexRenderer.start();
-        {
-            for (IRenderer renderer : renderers.keySet()) {
-                ScreenPosition position = renderers.get(renderer);
-                renderer.renderDummy(position);
+                    if (mouseX >= (rend.x - 5) & mouseX <= (rend.x + rend.getWidth() + 5)) {
+                        if(showSnapLines){
+                            boolean shouldRenderplusHeight = (rend.y < movingMod.y);
+                            int width = ((rend.x + rend.width - (rend.width / 2)) + 1) - ((rend.x + rend.width - (rend.width / 2)) - 1);
+                            int height = (movingMod.y + (shouldRenderplusHeight ? 0 : rend.height)) - ((rend.y) + (shouldRenderplusHeight ? rend.height : 0));
 
-            }
-
-            simplexRenderer.drawRectangle(0, (float) height / 2 - 0.5f, width, 1, Color.WHITE);
-            simplexRenderer.drawRectangle((float) width / 2 - 0.5f, 0, 1, height, Color.WHITE);
-
-            selectedRenderer.ifPresent(renderer -> {
-                ScreenPosition position = renderers.get(renderer);
-
-                float finalX, finalY;
-
-                for (IRenderer renderer1 : renderers.keySet()) {
-                    ScreenPosition position1 = renderers.get(renderer1);
-
-                    if (renderer1 != renderer) {
-                        if (mouseX >= (position1.getAbsoluteX() - 5) & mouseX <= (position1.getAbsoluteX() + renderer.getWidth() + 5)) {
-                            finalX = position.getAbsoluteY() == position1.getAbsoluteY() ? position1.getAbsoluteX() + renderer1.getWidth() : position1.getAbsoluteX();
-                            position.setAbsolute(finalX, position.getAbsoluteY());
+                            SimplexClient.getInstance().getRenderer().drawRoundedRectangle((rend.x + rend.width - (rend.width / 2)) - 1,
+                                    (rend.y) + (shouldRenderplusHeight ? rend.height : 0),
+                                    width,
+                                    height, 1, new Color(255, 255, 255));
                         }
-
-                        if (mouseY >= (position1.getAbsoluteY() - 5) & mouseY <= (position1.getAbsoluteY() + renderer.getHeight() + 5)) {
-                            finalY = position.getAbsoluteX() == position1.getAbsoluteX() ? position1.getAbsoluteY() + renderer1.getHeight() : position1.getAbsoluteY();
-                            position.setAbsolute(position.getAbsoluteX(), finalY);
-                        }
+                        finalX = rend.x;
                     }
+                    if (mouseY >= (rend.y - 5) & mouseY <= (rend.y + rend.getHeight() + 5)) {
+                        if(showSnapLines){
+                            boolean shouldRenderplusWidth = (rend.x < movingMod.x);
+                            int width = (movingMod.x + (shouldRenderplusWidth ? 0 : movingMod.width)) - (rend.x + (shouldRenderplusWidth ? rend.width : 0));
+                            int height = (rend.y + rend.height - (rend.height / 2) + 1) - (rend.y + rend.height - (rend.height / 2) - 1);
 
+                            SimplexClient.getInstance().getRenderer().drawRoundedRectangle(rend.x + (shouldRenderplusWidth ? rend.width : 0),
+                                    rend.y + rend.height - (rend.height / 2) - 1,
+                                    width,
+                                    height, 1, new Color(255, 255, 255));
+                        }
+                        finalY = rend.y;
+                    }
                 }
 
-                position.setAbsolute(mouseX + position.getAbsoluteX() - prevX, mouseY + position.getAbsoluteY() - prevY);
+            HUDModule module = (HUDModule) movingMod.owner;
+            module.setPosition(new int[] {finalX, finalY});
+        }
+        if (!leftClick && lastTickHolding) {
+            lastTickHolding = false;
+            movingMod = null;
+        }
 
-                adjustBounds(renderer, position);
+        if(Util.isDevEnv()){
+            renderDebugMenu();
+        }
 
-                prevX = mouseX;
-                prevY = mouseY;
+        SimplexClient.getInstance().getRenderer().end();
+    }
+
+    @Override
+    public void mouseButtonClick(boolean button, boolean value, double mouseX, double mouseY) {
+        if (!button && value && !lastTickHolding) {
+            if(this.getClickedModule(mouseX, mouseY) != null) {
+                Renderable rend = this.getClickedModule(mouseX, mouseY);
+                this.movingMod = rend;
+                this.moseX = (int) (mouseX - rend.x);
+                this.moseY = (int) (mouseY - rend.y);
+                this.lastTickHolding = true;
+            }
+        }
+    }
+
+    public Renderable getClickedModule(double mouseX, double mouseY) {
+        if (mouseX == 0.0 && mouseY == 0.0)
+            return null;
+
+        for (HUDModule mod : this.mods) {
+            Renderable m = mod.getRenderable();
+            if (mouseX >= m.x & mouseX <= (m.x + m.getWidth()) & mouseY >= m.y & mouseY <= (m.y + m.getHeight())
+                    & mod.isEnabled()) {
+                return m;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public List<GuiComponent> renderComponents() {
+        List<GuiComponent> comps = super.renderComponents();
+
+        if(Util.isDevEnv()){
+            comps.add(new CheckBox(width - 97, 25, width - 77, 40, "Render Snapping Lines") {
+                @Override
+                public void onClicked(boolean opened) {
+                    DraggableScreen.this.showSnapLines = opened;
+                }
+            });
+
+            comps.add(new CheckBox(width - 97, 45, width - 77, 60, "Render Divider Lines") {
+                @Override
+                public void onClicked(boolean opened) {
+                    DraggableScreen.this.showDividerLines = opened;
+                }
             });
         }
-        simplexRenderer.end();
 
-        super.render(poseStack, mouseX, mouseY, f);
+        return comps;
     }
 
-    @Override
-    public void onClose() {
-        Minecraft.getInstance().options.hideGui = false;
-        SimplexClient.getInstance().setInHud(false);
-        renderers.forEach(IRenderConfig::save);
-        super.onClose();
-    }
-
-    @Override
-    public boolean keyPressed(int i, int j, int k) {
-        if (i == InputConstants.KEY_RSHIFT) {
-            this.onClose();
+    public void renderDebugMenu() {
+        if(this.showDividerLines){
+            SimplexClient.getInstance().getRenderer().drawRectangle(0, (float) height / 2 - 0.5f, width, 1, Color.WHITE);
+            SimplexClient.getInstance().getRenderer().drawRectangle((float) width / 2 - 0.5f, 0, 1, height, Color.WHITE);
         }
-        return super.keyPressed(i, j, k);
+        Renderer renderer = SimplexClient.getInstance().getRenderer();
+
+        //Render
+        renderer.drawRoundedRectangle(width - 100, 2, 98, 100, 3, new Color(255,255,255,70));
+        renderer.drawString("Debug Menu", width - 50 - (renderer.getStringWidth("Debug Menu")[0] / 2), 10, new Color(-1));
     }
-
-    @Override
-    public boolean mouseClicked(double x, double y, int button) {
-        this.prevX = (int) x;
-        this.prevY = (int) y;
-
-        selectedRenderer =
-                SimplexClient
-                        .getInstance()
-                        .getModuleManager()
-                        .getRenderers()
-                        .stream()
-                        .filter(renderer ->
-                                renderer.isEnabled()
-                                        && x >= renderers.get(renderer).getAbsoluteX() - 2.5
-                                        && x <= renderers.get(renderer).getAbsoluteX() - 2.5 + (renderer.getWidth() + 1)
-                                        && y >= renderers.get(renderer).getAbsoluteY() - 2.5
-                                        && y <= renderers.get(renderer).getAbsoluteY() - 2.5 + renderer.getHeight() + 1)
-                        .findFirst();
-        return super.mouseClicked(x, y, button);
-    }
-
-    @Override
-    public boolean mouseReleased(double d, double e, int i) {
-        selectedRenderer = Optional.empty();
-        return super.mouseReleased(d, e, i);
-    }
-
-    private void adjustBounds(IRenderer renderer, ScreenPosition position) {
-        int screenWidth = Minecraft.getInstance().getWindow().getGuiScaledWidth();
-        int screenHeight = Minecraft.getInstance().getWindow().getGuiScaledHeight();
-
-        float absoluteX = Math.max(4, Math.min(position.getAbsoluteX(), Math.max(screenWidth - renderer.getWidth() + 4, 0)));
-        float absoluteY = Math.max(3, Math.min(position.getAbsoluteY(), Math.max(screenHeight - renderer.getHeight() + 3, 0)));
-
-        position.setAbsolute(absoluteX, absoluteY);
-    }
-
 }

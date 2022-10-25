@@ -7,9 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.KeyMapping;
 import org.lwjgl.nanovg.NanoVGGL3;
-import tk.simplexclient.module.ModInstances;
-import tk.simplexclient.module.config.ModuleConfig;
 import tk.simplexclient.module.ModuleManager;
+import tk.simplexclient.module.config.ModuleConfig;
 import tk.simplexclient.renderer.GLState;
 import tk.simplexclient.renderer.Renderer;
 import tk.simplexclient.utils.KeyUtils;
@@ -63,10 +62,8 @@ public class SimplexClient {
 
         glState = new GLState();
         renderer = new Renderer(vg);
-        moduleConfig = new ModuleConfig();
         moduleManager = new ModuleManager();
-
-        ModInstances.register(moduleManager);
+        moduleConfig = new ModuleConfig();
     }
 
     /**
@@ -74,6 +71,7 @@ public class SimplexClient {
      */
     public void stop() {
         System.out.println("Saving module config...");
+        moduleConfig.saveModuleConfigs();
     }
 
 }
