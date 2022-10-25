@@ -1,6 +1,7 @@
 package tk.simplexclient.json;
 
 import com.google.gson.Gson;
+import lombok.Getter;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -8,10 +9,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-public class JsonFile implements IDocument<JsonDocument> {
+public abstract class JsonFile implements IDocument<JsonDocument> {
 
     private final Gson gson;
 
+    @Getter
     private IDocument<JsonDocument> document;
 
     private final File file;
@@ -61,10 +63,14 @@ public class JsonFile implements IDocument<JsonDocument> {
             while (reader.ready()) builder.append(reader.readLine());
             reader.close();
             document = new JsonDocument(gson, builder.toString());
+
+            loadFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    public abstract void loadFile();
 
     public void save() {
         try {

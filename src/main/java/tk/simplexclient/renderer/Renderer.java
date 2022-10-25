@@ -120,10 +120,14 @@ public class Renderer {
     }
 
     public void drawString(String text, float x, float y, Color color) {
+        drawStringScaled(text, x, y, 1, color);
+    }
+
+    public void drawStringScaled(String text, float x, float y, float size, Color color) {
         ByteBuffer byteBuffer = memUTF8(text, false);
         memFree(byteBuffer);
-
-        NanoVG.nvgFontSize(vg, 8.0f);
+        float sizee = 8.0f;
+        NanoVG.nvgFontSize(vg, sizee * size);
         NanoVG.nvgFontFace(vg, "roboto");
         NanoVG.nvgTextMetrics(vg, null, null, BufferUtils.createFloatBuffer(1));
 
@@ -136,14 +140,18 @@ public class Renderer {
     }
 
     public float[] getStringWidth(String text) {
+        return getStringWidth(text, 1);
+    }
+
+    public float[] getStringWidth(String text, float scale) {
         ByteBuffer byteBuffer = memUTF8(text, false);
         memFree(byteBuffer);
+        float sizee = 8.0f;
 
-        NanoVG.nvgFontSize(vg, 8.0f);
+        NanoVG.nvgFontSize(vg, sizee * scale);
         NanoVG.nvgFontFace(vg, "roboto");
         NanoVG.nvgTextMetrics(vg, null, null, BufferUtils.createFloatBuffer(1));
         NanoVG.nvgTextBounds(vg, 0, 0, byteBuffer, bounds);
-
         return new float[]{bounds.get(2) - bounds.get(0), (bounds.get(3) - bounds.get(1)) - 2};
     }
 }

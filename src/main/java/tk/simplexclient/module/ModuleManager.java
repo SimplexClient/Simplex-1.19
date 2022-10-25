@@ -1,55 +1,22 @@
 package tk.simplexclient.module;
 
-import tk.simplexclient.SimplexClient;
-import tk.simplexclient.module.hud.HudModule;
-import tk.simplexclient.module.hud.IRenderer;
-import tk.simplexclient.module.hud.ScreenPosition;
+import tk.simplexclient.module.impl.FPSModule;
+import tk.simplexclient.module.impl.TestModule;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ModuleManager {
+    public List<Module> modules = new ArrayList<>();
 
-    private final List<IRenderer> renderers = new ArrayList<>();
-
-    private final List<HudModule> modules = new ArrayList<>();
-
-    public void registerModules(HudModule... renderers) {
-        this.renderers.addAll(Arrays.asList(renderers));
-        this.modules.addAll(Arrays.asList(renderers));
+    public ModuleManager(){
+        modules.add(new TestModule());
+        modules.add(new FPSModule());
     }
 
-    public List<IRenderer> getRenderers() {
-        return this.renderers;
+    public List<Module> getEnabledModules() {
+        List<Module> mods = new ArrayList<>(modules);
+        mods.removeIf(module -> !module.isEnabled());
+        return mods;
     }
-
-    public List<HudModule> getModules() {
-        return modules;
-    }
-
-    public List<IRenderer> getEnabledRenderers() {
-        return this.renderers.stream().filter(IRenderer::isEnabled).collect(Collectors.toList());
-    }
-
-    public List<HudModule> getEnabledHudModules() {
-        return this.modules.stream().filter(HudModule::isEnabled).collect(Collectors.toList());
-    }
-
-    public void callRenderer(IRenderer renderer) {
-        if (!renderer.isEnabled()) return;
-        ScreenPosition position = renderer.load();
-
-        if (position == null) {
-            position = ScreenPosition.fromRelativePosition(0.5f, 0.5f);
-        }
-
-        SimplexClient.getInstance().getRenderer().start();
-        {
-            renderer.render(position);
-        }
-        SimplexClient.getInstance().getRenderer().end();
-    }
-
 }

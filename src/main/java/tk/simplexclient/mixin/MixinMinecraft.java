@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import tk.simplexclient.SimplexClient;
 import tk.simplexclient.access.AccessMinecraft;
 import tk.simplexclient.ui.DraggableScreen;
+import tk.simplexclient.ui.api.ScreenBase;
 
 @Mixin(Minecraft.class)
 public abstract class MixinMinecraft implements AccessMinecraft {
@@ -46,7 +47,7 @@ public abstract class MixinMinecraft implements AccessMinecraft {
     @Inject(method = "runTick", at = @At("TAIL"))
     public void runTick(boolean bl, CallbackInfo ci) {
         if (SimplexClient.getDraggableHud().isDown()) {
-            Minecraft.getInstance().setScreen(new DraggableScreen());
+            Minecraft.getInstance().setScreen(new ScreenBase(new DraggableScreen()));
         }
     }
 

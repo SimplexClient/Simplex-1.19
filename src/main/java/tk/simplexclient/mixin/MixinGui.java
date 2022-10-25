@@ -9,8 +9,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import tk.simplexclient.SimplexClient;
-import tk.simplexclient.module.hud.IRenderer;
-import tk.simplexclient.ui.DraggableScreen;
+import tk.simplexclient.module.HUDModule;
+import tk.simplexclient.module.Module;
+import tk.simplexclient.ui.api.ScreenBase;
 
 @Mixin(Gui.class)
 public class MixinGui {
@@ -32,10 +33,14 @@ public class MixinGui {
 
     @Inject(method = "render", at = @At("TAIL"))
     public void render(PoseStack poseStack, float f, CallbackInfo ci) {
-        for (IRenderer renderer : SimplexClient.getInstance().getModuleManager().getEnabledRenderers()) {
-            if (Minecraft.getInstance().screen instanceof DraggableScreen) return;
-            SimplexClient.getInstance().getModuleManager().callRenderer(renderer);
+        SimplexClient.getInstance().getRenderer().start();
+        for (Module renderer : SimplexClient.getInstance().getModuleManager().getEnabledModules()) {
+            if (Minecraft.getInstance().screen instanceof ScreenBase) return;
+            if (!(renderer instanceof HUDModule)) return;
+
+            ((HUDModule) renderer).render();
         }
+        SimplexClient.getInstance().getRenderer().end();
     }
 
 }

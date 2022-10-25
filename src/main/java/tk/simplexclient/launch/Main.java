@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.launchwrapper.Launch;
+import tk.simplexclient.utils.Util;
 
 public class Main {
 
@@ -14,7 +15,7 @@ public class Main {
 		arguments.add("--tweakClass");
 		arguments.add("tk.simplexclient.launch.Tweaker");
 
-		if(Boolean.getBoolean("fabric.development")) {
+		if(Util.isDevEnv()) {
 			arguments.add("--version");
 			arguments.add("dev");
 

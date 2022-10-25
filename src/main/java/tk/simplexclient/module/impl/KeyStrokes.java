@@ -1,12 +1,5 @@
 package tk.simplexclient.module.impl;
 
-import net.minecraft.client.KeyMapping;
-import net.minecraft.client.Minecraft;
-import tk.simplexclient.access.AccessMinecraft;
-import tk.simplexclient.module.hud.HudModule;
-
-import java.awt.*;
-
 public class KeyStrokes {
 
     /*
