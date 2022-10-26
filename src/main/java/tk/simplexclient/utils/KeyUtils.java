@@ -1,7 +1,9 @@
 package tk.simplexclient.utils;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import lombok.Getter;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Arrays;
@@ -42,4 +44,16 @@ public class KeyUtils {
             keyBindings = ArrayUtils.remove(keyBindings, Arrays.asList(keyBindings).indexOf(key));
     }
 
+
+    public static boolean isKeyPressed(int key){
+        if(key == 0){ //Mouse Keys
+            return Minecraft.getInstance().mouseHandler.isLeftPressed();
+        } else if(key == 1){
+            return Minecraft.getInstance().mouseHandler.isRightPressed();
+        } else if(key == 2){
+            return Minecraft.getInstance().mouseHandler.isMiddlePressed();
+        } else{ //Keyboard
+            return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), key);
+        }
+    }
 }
