@@ -31,11 +31,15 @@ public class Renderable {
         return this.renderText(text, x, y, color, 1);
     }
 
+    public Renderable renderText(String text, int[] pos, java.awt.Color color) {
+        return this.renderText(text, pos[0], pos[1], color, 1);
+    }
+
     public Renderable fillArea(int startX, int startY, int endX, int endY, java.awt.Color color) {
         Runnable rrrr = render;
         render = () -> {
             rrrr.run();
-            vr.drawRoundedRectangle(this.getX() + startX, this.getY() + startY, this.getX() + endX, this.getY() + endY, 3, color);
+            vr.drawRoundedRectangle(this.getX() + startX, this.getY() + startY, (endX - startX), (endY - startY), 3, color);
             if(endX > width) {
                 width = endX;
             }
@@ -91,5 +95,14 @@ public class Renderable {
 
 
         return this;
+    }
+
+    public int[] getIdealRenderingPosForText(String w, int x1, int y1, int endX, int endY) {
+        int[] pos = SimplexClient.getInstance().getRenderer().getIdealRenderingPosForText(w, this.getX() + x1, this.getY() + y1, this.getX() + endX, this.getY() + endY);
+
+        pos[0] = pos[0] - this.getX();
+        pos[1] = pos[1] - this.getY();
+
+        return pos;
     }
 }

@@ -1,6 +1,7 @@
 package tk.simplexclient.module;
 
 import tk.simplexclient.module.impl.FPSModule;
+import tk.simplexclient.module.impl.KeyStrokes;
 import tk.simplexclient.module.impl.TestModule;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ public class ModuleManager {
     public ModuleManager(){
         modules.add(new TestModule());
         modules.add(new FPSModule());
+        modules.add(new KeyStrokes());
     }
 
     public List<Module> getEnabledModules() {

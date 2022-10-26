@@ -154,4 +154,15 @@ public class Renderer {
         NanoVG.nvgTextBounds(vg, 0, 0, byteBuffer, bounds);
         return new float[]{bounds.get(2) - bounds.get(0), (bounds.get(3) - bounds.get(1)) - 2};
     }
+
+    public int[] getIdealRenderingPosForText(String text, int x, int y, int endX, int endY){
+        float[] pos = getStringWidth(text);
+        float afterWidth = pos[0];
+        float afterHeight = pos[1];
+
+        int tx = ((int) (((endX - x) / 2) - (afterWidth / 2)));
+        int ty = ((int) (((endY - y) / 2) - (afterHeight / 2)));
+
+        return new int[] {x + tx, y + ty};
+    }
 }

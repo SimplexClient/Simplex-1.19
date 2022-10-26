@@ -50,8 +50,8 @@ public class ModuleConfig extends JsonFile {
         for(tk.simplexclient.module.Module mod : SimplexClient.getInstance().getModuleManager().modules){
             if(mod instanceof HUDModule){
                 int[] pos = new int[] {0 , 0};
-                getDocument().get(mod.getName().toLowerCase(), Module.class);
-                loadModuleConfig((HUDModule) mod, pos);
+                //getDocument().get(mod.getName().toLowerCase(), Module.class);
+                //loadModuleConfig((HUDModule) mod, pos);
             }
         }
     }
