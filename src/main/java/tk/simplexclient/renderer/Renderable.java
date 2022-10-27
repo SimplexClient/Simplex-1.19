@@ -1,6 +1,11 @@
 package tk.simplexclient.renderer;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import lombok.Getter;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.lwjgl.opengl.GL11;
 import tk.simplexclient.SimplexClient;
 
 import java.awt.Color;
@@ -36,9 +41,9 @@ public class Renderable {
     }
 
     public Renderable fillArea(int startX, int startY, int endX, int endY, java.awt.Color color) {
-        Runnable rrrr = render;
+        Runnable oldRender = render;
         render = () -> {
-            rrrr.run();
+            oldRender.run();
             vr.drawRoundedRectangle(this.getX() + startX, this.getY() + startY, (endX - startX), (endY - startY), 3, color);
             if(endX > width) {
                 width = endX;
@@ -77,9 +82,9 @@ public class Renderable {
     }
 
     public Renderable renderText(String text, int x, int y, Color color, float scale) {
-        Runnable rrrr = render;
+        Runnable oldRender = render;
         render = () -> {
-            rrrr.run();
+            oldRender.run();
             vr.drawStringScaled(text, this.getX() + x, this.getY() + y, scale, color);
             float[] size = vr.getStringWidth(text, scale);
             int endX = (int) (x + size[0]);
@@ -104,5 +109,51 @@ public class Renderable {
         pos[1] = pos[1] - this.getY();
 
         return pos;
+    }
+
+    public Renderable renderItemStack(int x, int y, @NotNull  ItemStack is, boolean renderText) {
+        Runnable oldRender = render;
+        render = () -> {
+            oldRender.run();
+            int endX = x + 16;
+            int endY = y + 16;
+
+            if(is.getItem().canBeDepleted() && renderText) {
+                double damage = ((is.getMaxDamage() - is.getDamageValue()) / (double) is.getMaxDamage()) * 100;
+                double renderDamage = ((is.getMaxDamage() - is.getDamageValue()) / (double) is.getMaxDamage()) * 16;
+                Color damageColor;
+
+                if(damage >= 25 && damage <= 70){
+                    damageColor = new Color(255, 255, 0);
+                }
+                else if(damage > 70) {
+                    damageColor = new Color(0, 255, 0);
+                }else{
+                    damageColor = new Color(255,0,0);
+                }
+
+                vr.drawRoundedRectangle(this.getX() + x, this.getY() + endY, (float) (renderDamage), 2, 1, damageColor);
+                endY += 6;
+            }
+
+            vr.end();
+
+            GL11.glEnable(GL11.GL_BLEND);
+
+            Minecraft.getInstance().getItemRenderer().renderGuiItem(is, this.getX() + x, this.getY() + y);
+
+            GL11.glDisable(GL11.GL_BLEND);
+
+            vr.start();
+
+            if(endX > width) {
+                width = endX;
+            }
+            if(endY > height) {
+                height = endY;
+            }
+        };
+
+        return this;
     }
 }

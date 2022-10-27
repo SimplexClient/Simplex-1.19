@@ -6,11 +6,14 @@ import com.mojang.blaze3d.platform.InputConstants;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import org.lwjgl.nanovg.NanoVGGL3;
 import tk.simplexclient.module.ModuleManager;
 import tk.simplexclient.module.config.ModuleConfig;
 import tk.simplexclient.renderer.GLState;
 import tk.simplexclient.renderer.Renderer;
+import tk.simplexclient.ui.DraggableScreen;
+import tk.simplexclient.ui.api.ScreenBase;
 import tk.simplexclient.utils.KeyUtils;
 
 public class SimplexClient {
@@ -74,4 +77,7 @@ public class SimplexClient {
         moduleConfig.saveModuleConfigs();
     }
 
+    public boolean isModMovingScreenEnabled(){
+        return Minecraft.getInstance().screen instanceof ScreenBase && ((ScreenBase) Minecraft.getInstance().screen).bridge instanceof DraggableScreen;
+    }
 }
