@@ -123,6 +123,10 @@ public class Renderer {
         drawStringScaled(text, x, y, 1, color);
     }
 
+    public void drawString(String text, int[] pos, Color color) {
+        drawStringScaled(text, pos[0], pos[1], 1, color);
+    }
+
     public void drawStringScaled(String text, float x, float y, float size, Color color) {
         ByteBuffer byteBuffer = memUTF8(text, false);
         memFree(byteBuffer);

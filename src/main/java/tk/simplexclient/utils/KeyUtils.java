@@ -56,4 +56,12 @@ public class KeyUtils {
             return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), key);
         }
     }
+
+    public static double mouseX(){
+        return Minecraft.getInstance().mouseHandler.xpos();
+    }
+
+    public static double mouseY(){
+        return Minecraft.getInstance().mouseHandler.ypos();
+    }
 }

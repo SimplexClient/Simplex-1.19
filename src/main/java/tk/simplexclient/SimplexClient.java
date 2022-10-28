@@ -13,7 +13,9 @@ import tk.simplexclient.module.config.ModuleConfig;
 import tk.simplexclient.renderer.GLState;
 import tk.simplexclient.renderer.Renderer;
 import tk.simplexclient.ui.DraggableScreen;
+import tk.simplexclient.ui.MainMenuScreen;
 import tk.simplexclient.ui.api.ScreenBase;
+import tk.simplexclient.ui.api.ScreenBridge;
 import tk.simplexclient.utils.KeyUtils;
 
 public class SimplexClient {
@@ -46,6 +48,9 @@ public class SimplexClient {
     @Setter
     private boolean isInHud = false;
 
+    @Getter
+    private ScreenBridge mainMenu;
+
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
 
     public void init() {
@@ -63,6 +68,7 @@ public class SimplexClient {
         instance = this;
         vg = NanoVGGL3.nvgCreate(NanoVGGL3.NVG_ANTIALIAS | NanoVGGL3.NVG_STENCIL_STROKES);
 
+        mainMenu = new MainMenuScreen();
         glState = new GLState();
         renderer = new Renderer(vg);
         moduleManager = new ModuleManager();

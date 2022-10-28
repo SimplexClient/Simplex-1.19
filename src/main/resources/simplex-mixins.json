@@ -11,6 +11,8 @@
     "MixinMinecraft",
     "MixinOptions",
     "MixinTitleScreen",
-    "MixinWindow"
+    "MixinWindow",
+    "MixinLoadingOverlay",
+    "MixinSharedConstants"
   ]
 }
