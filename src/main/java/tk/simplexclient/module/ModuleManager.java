@@ -1,9 +1,6 @@
 package tk.simplexclient.module;
 
-import tk.simplexclient.module.impl.ArmorStatusModule;
-import tk.simplexclient.module.impl.CPSModule;
-import tk.simplexclient.module.impl.FPSModule;
-import tk.simplexclient.module.impl.KeyStrokes;
+import tk.simplexclient.module.impl.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +13,8 @@ public class ModuleManager {
         modules.add(new FPSModule());
         modules.add(new KeyStrokes());
         modules.add(new ArmorStatusModule());
+        modules.add(new ItemCounterMod());
+        modules.add(new TimeDisplay());
     }
 
     public List<Module> getEnabledModules() {

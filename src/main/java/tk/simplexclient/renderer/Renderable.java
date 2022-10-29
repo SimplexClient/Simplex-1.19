@@ -156,4 +156,41 @@ public class Renderable {
 
         return this;
     }
+
+    public Renderable renderItemStack(int x, int y, @NotNull  ItemStack is, int count, Color color) {
+        Runnable oldRender = render;
+        render = () -> {
+            oldRender.run();
+            int endX = x + 16;
+            int endY = y + 16;
+
+            if(is.isStackable()){ //Render Amount
+                String text = count + "";
+                vr.drawString(text, this.getX() + endX - 3, this.getY() + endY- 3, color);
+                float[] width = vr.getStringWidth(text);
+
+                endX = (int) ((endX - 3) + width[0]);
+                endY = (int) ((endY - 3) + width[1]);
+            }
+
+            vr.end();
+
+            GL11.glEnable(GL11.GL_BLEND);
+
+            Minecraft.getInstance().getItemRenderer().renderGuiItem(is, this.getX() + x, this.getY() + y);
+
+            GL11.glDisable(GL11.GL_BLEND);
+
+            vr.start();
+
+            if(endX > width) {
+                width = endX;
+            }
+            if(endY > height) {
+                height = endY;
+            }
+        };
+
+        return this;
+    }
 }

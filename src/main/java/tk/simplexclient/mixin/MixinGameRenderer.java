@@ -42,6 +42,8 @@ public abstract class MixinGameRenderer {
 
     /**
      * ok
+     * @author CuteNyami
+     * @reason uhm idk
      */
     @Overwrite
     private void renderItemInHand(PoseStack poseStack, Camera camera, float f) {
