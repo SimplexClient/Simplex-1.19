@@ -26,8 +26,6 @@ public class LoadingScreen {
     private int lastAdder = 0;
 
     public void render(PoseStack poseStack, int mouseX, int mouseY, float progressbar) {
-        if(!this.minecraft.getWindow().isFullscreen()) this.minecraft.getWindow().toggleFullScreen();
-
         int width = this.minecraft.getWindow().getGuiScaledWidth();
         int height = this.minecraft.getWindow().getGuiScaledHeight();
 
