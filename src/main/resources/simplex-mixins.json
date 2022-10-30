@@ -13,6 +13,8 @@
     "MixinTitleScreen",
     "MixinWindow",
     "MixinLoadingOverlay",
-    "MixinSharedConstants"
+    "MixinSharedConstants",
+    "MixinItemEntity",
+    "MixinItemEntityRenderer"
   ]
 }
