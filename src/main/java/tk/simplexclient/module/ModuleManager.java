@@ -15,11 +15,17 @@ public class ModuleManager {
         modules.add(new ArmorStatusModule());
         modules.add(new ItemCounterMod());
         modules.add(new TimeDisplay());
+        modules.add(new ItemPhysicsMod());
     }
 
     public List<Module> getEnabledModules() {
         List<Module> mods = new ArrayList<>(modules);
         mods.removeIf(module -> !module.isEnabled());
         return mods;
+    }
+
+    public Module getModule(String name){
+        for (Module module : modules) if(module.getName().equalsIgnoreCase(name)) return module;
+        return null;
     }
 }
