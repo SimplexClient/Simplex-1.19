@@ -4,12 +4,12 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import tk.simplexclient.SimplexClient;
+import tk.simplexclient.event.EventBus;
 
 public class Module {
 
     @Getter
-    @Setter
-    private boolean enabled = true;
+    private boolean enabled;
 
     @Getter
     @Setter
@@ -23,6 +23,15 @@ public class Module {
         this.client = SimplexClient.getInstance();
 
         this.name = name;
+        this.setEnabled(true);
     }
 
+    public void setEnabled(boolean enabled) {
+        if(enabled)
+            EventBus.getInstance().subscribe(this);
+        else
+            EventBus.getInstance().unSubscribe(this);
+
+        this.enabled = enabled;
+    }
 }

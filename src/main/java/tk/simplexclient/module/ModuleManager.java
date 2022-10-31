@@ -16,6 +16,7 @@ public class ModuleManager {
         modules.add(new ItemCounterMod());
         modules.add(new TimeDisplay());
         modules.add(new ItemPhysicsMod());
+        modules.add(new TimeChanger());
     }
 
     public List<Module> getEnabledModules() {
