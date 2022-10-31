@@ -3,12 +3,12 @@ package tk.simplexclient.mixin;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
-import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import tk.simplexclient.SimplexClient;
-import tk.simplexclient.ui.api.GuiComponent;
+import tk.simplexclient.ui.api.UIComponent;
 import tk.simplexclient.ui.api.ScreenBridge;
+import tk.simplexclient.ui.desktop.Desktop;
 
 import java.util.List;
 
@@ -19,11 +19,11 @@ public class MixinTitleScreen extends Screen {
     boolean left = false;
     boolean middle = false;
     public ScreenBridge bridge;
-    public List<GuiComponent> components = null;
+    public List<UIComponent> components = null;
     public int lastW = 0, lastH = 0;
 
     public MixinTitleScreen() {
-        super(Component.nullToEmpty(""));
+        super(net.minecraft.network.chat.Component.nullToEmpty(""));
         this.bridge = SimplexClient.getInstance().getMainMenu();
     }
 
@@ -33,7 +33,10 @@ public class MixinTitleScreen extends Screen {
      */
     @Overwrite
     public void init(){
-
+        minecraft.setScreen(new Desktop(true));
+        if(this.bridge == null)
+            this.bridge = SimplexClient.getInstance().getMainMenu();
+        this.bridge.init();
     }
 
 
@@ -57,7 +60,7 @@ public class MixinTitleScreen extends Screen {
 
         if(components == null) this.components = this.bridge.renderComponents();
 
-        this.bridge.render(arg1, arg2, left, right, middle);
+        this.bridge.render(arg0, arg1, arg2, left, right, middle);
 
         SimplexClient.getInstance().getRenderer().start();
         this.components.forEach(t -> t.render(arg1, arg2));
@@ -124,9 +127,14 @@ public class MixinTitleScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double p_94686_, double p_94687_, double p_94688_) {
-        this.components.forEach(t -> t.onScroll(p_94688_ == -1 ? GuiComponent.Scroll.DOWN : GuiComponent.Scroll.UP, p_94686_, p_94687_));
+        this.components.forEach(t -> t.onScroll(p_94688_ == -1 ? UIComponent.Scroll.DOWN : UIComponent.Scroll.UP, p_94686_, p_94687_));
 
         return super.mouseScrolled(p_94686_, p_94687_, p_94688_);
     }
 
+    @Override
+    public void onClose() {
+        this.bridge.onClose();
+        super.onClose();
+    }
 }

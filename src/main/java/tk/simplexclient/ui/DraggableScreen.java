@@ -1,10 +1,11 @@
 package tk.simplexclient.ui;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import tk.simplexclient.SimplexClient;
 import tk.simplexclient.module.HUDModule;
 import tk.simplexclient.renderer.Renderable;
 import tk.simplexclient.renderer.Renderer;
-import tk.simplexclient.ui.api.GuiComponent;
+import tk.simplexclient.ui.api.UIComponent;
 import tk.simplexclient.ui.api.ScreenBridge;
 import tk.simplexclient.ui.api.impl.CheckBox;
 import tk.simplexclient.utils.Util;
@@ -31,15 +32,15 @@ public class DraggableScreen extends ScreenBridge {
     }
     
     @Override
-    public void render(int mouseX, int mouseY, boolean leftClick, boolean rightClick, boolean middleClick) {
+    public void render(PoseStack poseStack, int mouseX, int mouseY, boolean leftClick, boolean rightClick, boolean middleClick) {
         SimplexClient.getInstance().getRenderer().start();
         for (HUDModule hud : mods) {
             hud.render();
         }
 
         if (leftClick && lastTickHolding) {
-            int finalX = (int) (mouseX - moseX);
-            int finalY = (int) (mouseY - moseY);
+            int finalX = mouseX - moseX;
+            int finalY = mouseY - moseY;
 
             for (HUDModule hud : mods) {
                 Renderable rend = hud.getRenderable();
@@ -118,8 +119,8 @@ public class DraggableScreen extends ScreenBridge {
     }
 
     @Override
-    public List<GuiComponent> renderComponents() {
-        List<GuiComponent> comps = super.renderComponents();
+    public List<UIComponent> renderComponents() {
+        List<UIComponent> comps = super.renderComponents();
 
         if(Util.isDevEnv()){
             comps.add(new CheckBox(width - 97, 25, width - 77, 40, "Render Snapping Lines") {

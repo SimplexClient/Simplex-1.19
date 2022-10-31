@@ -10,7 +10,7 @@ import tk.simplexclient.renderer.Renderable;
 import java.awt.*;
 
 public class ItemCounterMod extends HUDModule {
-    public Color backgroundColor = new Color(0,0,0,84); // Make this a setting
+    public Color backgroundColor = new Color(0, 0, 0, 84); // Make this a setting
     public Color textColor = new Color(-1); //Also this...
 
     public ItemCounterMod() {
@@ -23,29 +23,28 @@ public class ItemCounterMod extends HUDModule {
     public Renderable getRenderable() {
         Renderable renderable1 = this.renderable;
 
-        if(SimplexClient.getInstance().isModMovingScreenEnabled()){
+        if (SimplexClient.getInstance().isModMovingScreenEnabled()) {
             renderDummy(renderable1);
-        }else{
+        } else {
             render(renderable1);
         }
 
         return renderable1;
     }
 
-    public void render(Renderable r){
+    public void render(Renderable r) {
         ItemStack stack = Minecraft.getInstance().player.getInventory().getSelected();
 
         int count = 0;
 
-        for(ItemStack stack1 : Minecraft.getInstance().player.getInventory().items)
-        {
-            if(stack1.getItem().equals(stack.getItem())) count += stack1.getCount();
+        for (ItemStack stack1 : Minecraft.getInstance().player.getInventory().items) {
+            if (stack1.getItem().equals(stack.getItem())) count += stack1.getCount();
         }
 
         r.renderItemStack(0, 0, stack, count, textColor);
     }
 
-    public void renderDummy(Renderable r){
+    public void renderDummy(Renderable r) {
         r.renderItemStack(0, 0, new ItemStack(Items.DRIED_KELP_BLOCK), 69, textColor);
     }
 }

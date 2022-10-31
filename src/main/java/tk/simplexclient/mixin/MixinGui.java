@@ -13,8 +13,13 @@ import tk.simplexclient.module.HUDModule;
 import tk.simplexclient.module.Module;
 import tk.simplexclient.ui.api.ScreenBase;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Mixin(Gui.class)
 public class MixinGui {
+
+    public List<HUDModule> mods;
 
     /**
      * executes the start method of the SimplexClient class
@@ -29,16 +34,19 @@ public class MixinGui {
     @Inject(method = "<init>", at = @At("TAIL"))
     public void start(Minecraft minecraft, ItemRenderer itemRenderer, CallbackInfo ci) {
         new SimplexClient().start();
+        this.mods = new ArrayList<>();
+        SimplexClient.getInstance().getModuleManager().modules.forEach(t -> {
+            if (t instanceof HUDModule)
+                mods.add((HUDModule) t);
+        });
     }
 
     @Inject(method = "render", at = @At("TAIL"))
     public void render(PoseStack poseStack, float f, CallbackInfo ci) {
         SimplexClient.getInstance().getRenderer().start();
-        for (Module renderer : SimplexClient.getInstance().getModuleManager().getEnabledModules()) {
+        for (HUDModule mod : mods) {
             if (Minecraft.getInstance().screen instanceof ScreenBase) return;
-            if (!(renderer instanceof HUDModule)) return;
-
-            ((HUDModule) renderer).render();
+            mod.render();
         }
         SimplexClient.getInstance().getRenderer().end();
     }

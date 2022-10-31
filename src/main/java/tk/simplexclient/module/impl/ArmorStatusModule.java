@@ -9,8 +9,8 @@ import tk.simplexclient.renderer.Renderable;
 import java.awt.*;
 
 public class ArmorStatusModule extends HUDModule {
-    public boolean leftToRight = true; //MAKE THIS A SETTING
-    public boolean renderDurability = true; // THIS ONE TOO
+    public boolean leftToRight = false; //MAKE THIS A SETTING
+    public boolean renderDurability = false; // THIS ONE TOO
     public Color backgroundColor = new Color(0,0,0,84); // Make this a setting too
 
     public ArmorStatusModule() {
