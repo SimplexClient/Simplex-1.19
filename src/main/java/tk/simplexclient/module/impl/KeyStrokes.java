@@ -1,145 +1,64 @@
 package tk.simplexclient.module.impl;
 
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import tk.simplexclient.access.AccessMinecraft;
-import tk.simplexclient.module.hud.HudModule;
+import net.minecraft.client.Options;
+import tk.simplexclient.SimplexClient;
+import tk.simplexclient.module.HUDModule;
+import tk.simplexclient.renderer.Renderable;
+import tk.simplexclient.renderer.Renderer;
+import tk.simplexclient.utils.KeyUtils;
 
 import java.awt.*;
 
-public class KeyStrokes {
+public class KeyStrokes extends HUDModule {
 
-    /*
-    private KeystrokesMode mode;
+    public boolean mouseKeys = true; //Make this a setting when you make the setting manager to Nyami by Betterclient
+    public Color backgroundColor = new Color(0,0,0,84); // Make this a setting too
+    public Color backgroundColorPressed = new Color(150, 140, 140,156); // This one aswell
+    public Color textColor = new Color(-1); //Also this...
 
     public KeyStrokes() {
-        super("keystrokes", 0, 0);
+        super("KeyStrokes", 90, 10);
     }
 
     @Override
-    public void render() {
-        mode = KeystrokesMode.WASD_JUMP_MOUSE;
-        for (Key key : mode.getKeys()) {
-            renderer.drawRectangle(getX() + key.getX(), getY() + key.getY(), getX() + key.getX() + key.getWidth(), getY() + key.getY() + key.getHeight(), key.isDown() ? new Color(0, 0, 0, 102) : new Color(255, 255, 255, 120));
-        }
-        renderKeyStrokes();
+    public Renderable getRenderable() {
+        Renderable renderable1 = super.getRenderable();
+
+        //Render
+        render(renderable1);
+
+        return renderable1;
     }
 
-    @Override
-    public void renderDummy(int width, int height) {
-        mode = KeystrokesMode.WASD_JUMP_MOUSE;
-        for (Key key : mode.getKeys()) {
-            renderer.drawRectangle(getX() + key.getX(), getY() + key.getY(), getX() + key.getX() + key.getWidth(), getY() + key.getY() + key.getHeight(), key.isDown() ? new Color(0, 0, 0, 102) : new Color(255, 255, 255, 120));
-        }
-        renderKeyStrokes();
-    }
+    public void render(Renderable r){
+        boolean leftClick = KeyUtils.isKeyPressed(0);
+        boolean rightClick = KeyUtils.isKeyPressed(1);
+        Options op = Minecraft.getInstance().options;
 
-    public void renderKeyStrokes() {
-        renderer.drawString(AccessMinecraft.getMinecraft().getFPS() + " FPS", getX(), getY(), new Color(255, 255, 255));
+        boolean w = op.keyUp.isDown();
+        boolean s = op.keyDown.isDown();
+        boolean d = op.keyRight.isDown();
+        boolean a = op.keyLeft.isDown();
 
-        for (Key key : mode.getKeys()) {
-            float[] size = renderer.getStringWidth(key.getName());
-            int textWidth = (int) size[0];
-            renderer.drawString(key.getName(), getX() + key.getX() + key.getWidth() / 2 - textWidth / 2 - 5, getY() + key.getY() + key.getHeight() / 2 - 4, key.isDown() ? new Color(255, 255, 255, 255) : new Color(0, 0, 0, 255));
-        }
-    }
+        Renderer renderer = SimplexClient.getInstance().getRenderer();
 
-    public static class Key {
-        public static Minecraft mc = Minecraft.getInstance();
+        r.fillArea(30, 0, 50, 10, w ? backgroundColorPressed : backgroundColor); //W
+        r.fillArea(30, 15, 50, 25, s ? backgroundColorPressed : backgroundColor); //S
+        r.fillArea(5, 15, 25, 25, a ? backgroundColorPressed : backgroundColor); //A
+        r.fillArea(55, 15, 75, 25, d ? backgroundColorPressed : backgroundColor); //D
 
-        private static final Key W = new Key("W", mc.options.keyUp, 21, 1, 18, 18);
-        private static final Key A = new Key("A", mc.options.keyLeft, 1, 21, 18, 18);
-        private static final Key S = new Key("S", mc.options.keyDown, 21, 21, 18, 18);
-        private static final Key D = new Key("D", mc.options.keyRight, 41, 21, 18, 18);
+        r.renderText("W", r.getIdealRenderingPosForText("W", 30, 0, 50, 10), textColor);
+        r.renderText("A", r.getIdealRenderingPosForText("A", 5, 15, 25, 25), textColor);
+        r.renderText("S", r.getIdealRenderingPosForText("S", 30, 15, 50, 25), textColor);
+        r.renderText("D", r.getIdealRenderingPosForText("D", 55, 15, 75, 25), textColor);
 
-        private static final Key LMB = new Key("LMB", mc.options.keyAttack, 1, 41, 28, 18);
-        private static final Key RMB = new Key("RMB", mc.options.keyUse, 31, 41, 28, 18);
+        if(mouseKeys){
+            r.fillArea(5, 30, 38, 45, leftClick ? backgroundColorPressed : backgroundColor); //Left
+            r.fillArea(42, 30, 75, 45, rightClick ? backgroundColorPressed : backgroundColor); //Right
 
-        private static final Key Jump1 = new Key("§m---", mc.options.keyJump, 1, 41, 58, 10);
-        private static final Key Jump2 = new Key("§m---", mc.options.keyJump, 1, 61, 58, 10);
-
-        private final String name;
-        private final KeyMapping keyBind;
-        private final int x, y, w, h;
-
-        private float fade;
-
-        public Key(String name, KeyMapping keyBind, int x, int y, int w, int h) {
-            this.name = name;
-            this.keyBind = keyBind;
-            this.x = x;
-            this.y = y;
-            this.w = w;
-            this.h = h;
-        }
-
-        public boolean isDown() {
-            return keyBind.isDown();
-        }
-
-        public int getHeight() {
-            return h;
-        }
-
-        public int getWidth() {
-            return w;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
+            r.renderText("LMB", r.getIdealRenderingPosForText("LMB", 5, 30, 38, 45), textColor);
+            r.renderText("RMB", r.getIdealRenderingPosForText("RMB", 42, 30, 75, 45), textColor);
         }
     }
-
-    @Override
-    public float getWidth() {
-        return 60;
-    }
-
-    @Override
-    public float getHeight() {
-        return 72;
-    }
-
-    public static Color outlineColor;
-
-    public enum KeystrokesMode {
-        WASD(Key.W, Key.A, Key.S, Key.D),
-        WASD_MOUSE(Key.W, Key.A, Key.S, Key.D, Key.LMB, Key.RMB),
-        WASD_JUMP(Key.W, Key.A, Key.S, Key.D, Key.Jump1),
-        WASD_JUMP_MOUSE(Key.W, Key.A, Key.S, Key.D, Key.LMB, Key.RMB, Key.Jump2);
-
-        private final Key[] keys;
-        private int width, height;
-
-        KeystrokesMode(Key... keysIn) {
-            this.keys = keysIn;
-
-            for (Key key : keys) {
-                this.width = Math.max(this.width, key.getX() + key.getWidth());
-                this.height = Math.max(this.height, key.getY() + key.getHeight());
-            }
-        }
-
-        public int getHeight() {
-            return height;
-        }
-
-        public int getWidth() {
-            return width;
-        }
-
-        public Key[] getKeys() {
-            return keys;
-        }
-    }
-
-     */
 }

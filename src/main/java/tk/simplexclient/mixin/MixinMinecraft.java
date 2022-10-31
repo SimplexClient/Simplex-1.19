@@ -1,22 +1,23 @@
 package tk.simplexclient.mixin;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.main.GameConfig;
-import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Desc;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import tk.simplexclient.SimplexClient;
 import tk.simplexclient.access.AccessMinecraft;
 import tk.simplexclient.ui.DraggableScreen;
+import tk.simplexclient.ui.LoadingScreen;
+import tk.simplexclient.ui.api.ScreenBase;
 
 @Mixin(Minecraft.class)
 public abstract class MixinMinecraft implements AccessMinecraft {
-
     /**
      * Changes the title of the Minecraft Window
      * <p>
@@ -46,7 +47,7 @@ public abstract class MixinMinecraft implements AccessMinecraft {
     @Inject(method = "runTick", at = @At("TAIL"))
     public void runTick(boolean bl, CallbackInfo ci) {
         if (SimplexClient.getDraggableHud().isDown()) {
-            Minecraft.getInstance().setScreen(new DraggableScreen());
+            Minecraft.getInstance().setScreen(new ScreenBase(new DraggableScreen()));
         }
     }
 

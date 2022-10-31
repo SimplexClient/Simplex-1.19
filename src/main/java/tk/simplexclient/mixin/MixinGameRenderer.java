@@ -13,6 +13,8 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import tk.simplexclient.SimplexClient;
 
+import java.util.Objects;
+
 @Mixin(GameRenderer.class)
 public abstract class MixinGameRenderer {
 
@@ -40,6 +42,8 @@ public abstract class MixinGameRenderer {
 
     /**
      * ok
+     * @author CuteNyami
+     * @reason uhm idk
      */
     @Overwrite
     private void renderItemInHand(PoseStack poseStack, Camera camera, float f) {
@@ -55,7 +59,7 @@ public abstract class MixinGameRenderer {
             }
 
             boolean bl = this.minecraft.getCameraEntity() instanceof LivingEntity && ((LivingEntity)this.minecraft.getCameraEntity()).isSleeping();
-            if ((this.minecraft.options.getCameraType().isFirstPerson() && !bl && !this.minecraft.options.hideGui && this.minecraft.gameMode.getPlayerMode() != GameType.SPECTATOR) || SimplexClient.getInstance().isInHud()) {
+            if ((this.minecraft.options.getCameraType().isFirstPerson() && !bl && !this.minecraft.options.hideGui && Objects.requireNonNull(this.minecraft.gameMode).getPlayerMode() != GameType.SPECTATOR) || SimplexClient.getInstance().isInHud()) {
                 this.lightTexture().turnOnLightLayer();
                 this.itemInHandRenderer.renderHandsWithItems(f, poseStack, this.renderBuffers.bufferSource(), this.minecraft.player, this.minecraft.getEntityRenderDispatcher().getPackedLightCoords(this.minecraft.player, f));
                 this.lightTexture.turnOffLightLayer();

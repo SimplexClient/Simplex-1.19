@@ -11,5 +11,5 @@ import java.util.ArrayList;
 @AllArgsConstructor
 public class Module {
     private final boolean enabled;
-    private final ArrayList<Float> pos;
+    private final ArrayList<Integer> pos;
 }
