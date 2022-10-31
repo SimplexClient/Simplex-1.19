@@ -1,10 +1,10 @@
 package tk.simplexclient.ui.api.impl;
 
-import tk.simplexclient.ui.api.GuiComponent;
+import tk.simplexclient.ui.api.UIComponent;
 
 import java.awt.*;
 
-public abstract class Button extends GuiComponent {
+public abstract class Button extends UIComponent {
     private Color backgroundColor;
     private String text;
 
@@ -17,11 +17,11 @@ public abstract class Button extends GuiComponent {
     @Override
     public void render(double mouseX, double mouseY) {
         if(basicCollisionCheck(mouseX,mouseY,x,y,endX,endY)){
-            vr.drawRoundedRectangle(x - 2, y - 2, endX - x + 4, endY - y + 4, 5f, backgroundColor);
-            vr.drawString(text, vr.getIdealRenderingPosForText(text, x - 2, y - 2, endX + 2, endY + 2), new Color(-1));
+            renderer.drawRoundedRectangle(x - 2, y - 2, endX - x + 4, endY - y + 4, 5f, backgroundColor);
+            renderer.drawString(text, renderer.getIdealRenderingPosForText(text, x - 2, y - 2, endX + 2, endY + 2), new Color(-1));
         }else{
-            vr.drawRoundedRectangle(x, y, (float) endX - x, (float) endY - y, 5f, backgroundColor);
-            vr.drawString(text, vr.getIdealRenderingPosForText(text, x, y, endX, endY), new Color(-1));
+            renderer.drawRoundedRectangle(x, y, (float) endX - x, (float) endY - y, 5f, backgroundColor);
+            renderer.drawString(text, renderer.getIdealRenderingPosForText(text, x, y, endX, endY), new Color(-1));
         }
     }
 

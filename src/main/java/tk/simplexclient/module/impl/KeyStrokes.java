@@ -17,7 +17,6 @@ public class KeyStrokes extends HUDModule {
     public Color backgroundColorPressed = new Color(150, 140, 140,156); // This one aswell
     public Color textColor = new Color(-1); //Also this...
 
-
     public KeyStrokes() {
         super("KeyStrokes", 90, 10);
     }

@@ -8,7 +8,8 @@ import net.minecraft.resources.ResourceLocation;
 
 public class Util {
     public static boolean isDevEnv(){
-        return Boolean.getBoolean("fabric.development") || System.getenv("fabric.development").equalsIgnoreCase("true");
+        //return Boolean.getBoolean("fabric.development") || System.getenv("fabric.development").equalsIgnoreCase("true");
+        return true;
     }
 
     public static void blit(int x, int y, int width, int height, ResourceLocation location){

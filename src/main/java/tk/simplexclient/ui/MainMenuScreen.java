@@ -2,19 +2,14 @@ package tk.simplexclient.ui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.realmsclient.RealmsMainScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.screens.OptionsScreen;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
-import net.minecraft.client.gui.screens.multiplayer.SafetyScreen;
-import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
+import org.lwjgl.nanovg.NanoVG;
 import tk.simplexclient.SimplexClient;
 import tk.simplexclient.ui.api.ScreenBridge;
-import tk.simplexclient.ui.api.impl.Button;
+import tk.simplexclient.ui.api.UIComponent;
 
 import java.awt.*;
 import java.util.List;
@@ -22,17 +17,35 @@ import java.util.List;
 public class MainMenuScreen extends ScreenBridge {
 
     @Override
-    public void render(int mouseX, int mouseY, boolean leftClick, boolean rightClick, boolean middleClick) {
-        /*
-        render main menu
-         */
+    public void init() {
+        super.init();
+    }
 
-        //Render Background
+    @Override
+    public void render(PoseStack poseStack, int mouseX, int mouseY, boolean leftClick, boolean rightClick, boolean middleClick) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, new ResourceLocation("simplex/textures/bg.png"));
+        RenderSystem.setShaderTexture(0, new ResourceLocation("simplex/textures/background.png"));
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-        GuiComponent.blit(new PoseStack(),  -21 + mouseX / 90, mouseY * -1 / 90, 0, 0, this.width + 20, this.height + 20, (this.width + 21), (this.height + 20));
+        GuiComponent.blit(poseStack, 0, 0, 0, 0, width, height, width, height);
+
+        SimplexClient.getInstance().getRenderer().start();
+        {
+            float[] size = SimplexClient.getInstance().getRenderer().getStringWidth("Simplex", 15);
+            SimplexClient.getInstance().getRenderer().drawStringScaled("Simplex", (float) this.width / 2 - (size[0] / 2), height / 2f - 65, 15, new Color(191, 191, 191), "inter");
+
+            NanoVG.nvgEndFrame(SimplexClient.getInstance().getVg());
+            NanoVG.nvgBeginFrame(SimplexClient.getInstance().getVg(), (float) Minecraft.getInstance().getWindow().getGuiScaledWidth(), Minecraft.getInstance().getWindow().getGuiScaledHeight(), (float) Minecraft.getInstance().getWindow().getGuiScale());
+
+            float w = 160;
+            float h = 75;
+            float x = (float) this.width / 2 - w / 2;
+            float y = (float) this.height / 2 - h / 2;
+
+            SimplexClient.getInstance().getRenderer().drawRoundedRectangle(x, y, w, h, 7f, new Color(42, 44, 43, 51));
+            SimplexClient.getInstance().getRenderer().drawRectangle((float) width / 2 - 0.25f, (float) this.height / 2 - 25, 0.5f, 50, new Color(89, 89, 89));
+        }
+        SimplexClient.getInstance().getRenderer().end();
     }
 
     @Override
@@ -41,45 +54,38 @@ public class MainMenuScreen extends ScreenBridge {
     }
 
     @Override
-    public List<tk.simplexclient.ui.api.GuiComponent> renderComponents() {
-        List<tk.simplexclient.ui.api.GuiComponent> comps = super.renderComponents();
-        Minecraft minecraft = Minecraft.getInstance();
-        comps.add(new Button(width / 2 - 30, height / 2 - 30, 60, 20, true, new Color(0,0,0,84), "Singleplayer") {
+    public List<UIComponent> renderComponents() {
+        List<UIComponent> components = super.renderComponents();
+
+        /*
+        components.add(new ButtonComponent(width / 2, height / 2, 60, 20,
+                new Color[]{
+                        new Color(202, 202, 202),
+                        new Color(102, 102, 102),
+                }, "Singleplayer") {
             @Override
             public void onClick() {
-                minecraft.setScreen(new SelectWorldScreen(minecraft.screen));
+                Minecraft.getInstance().setScreen(new SelectWorldScreen(Minecraft.getInstance().screen));
             }
         });
 
-        comps.add(new Button(width / 2 - 30, height / 2 - 5, 60, 20, true, new Color(0,0,0,84), "Multiplayer") {
+        components.add(new ButtonComponent(width / 2, height / 2 + 20, 60, 20,
+                new Color[]{
+                        new Color(202, 202, 202),
+                        new Color(102, 102, 102),
+                }, "Settings") {
             @Override
             public void onClick() {
-                Screen screen = new JoinMultiplayerScreen(minecraft.screen);
-                minecraft.setScreen((Screen)screen);
+                Minecraft.getInstance().setScreen(new OptionsScreen(Minecraft.getInstance().screen, Minecraft.getInstance().options));
             }
         });
+         */
 
-        comps.add(new Button(width / 2 - 30, height / 2 + 20, 60, 20, true, new Color(0,0,0,84), "Realms") {
-            @Override
-            public void onClick() {
-                minecraft.setScreen(new RealmsMainScreen(minecraft.screen));
-            }
-        });
+        return components;
+    }
 
-        comps.add(new Button(5, 5, 30, 10, true, new Color(0,0,0,0), "Options") {
-            @Override
-            public void onClick() {
-                minecraft.setScreen(new OptionsScreen(minecraft.screen, minecraft.options));
-            }
-        });
-
-        comps.add(new Button(width - 35, 5, 30, 10, true, new Color(0,0,0,0), "Quit") {
-            @Override
-            public void onClick() {
-                minecraft.stop();
-            }
-        });
-
-        return comps;
+    @Override
+    public void onClose() {
+        super.onClose();
     }
 }

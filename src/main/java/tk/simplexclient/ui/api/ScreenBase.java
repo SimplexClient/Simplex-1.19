@@ -13,7 +13,7 @@ public class ScreenBase extends Screen {
     boolean left = false;
     boolean middle = false;
     public ScreenBridge bridge;
-    public List<GuiComponent> components = null;
+    public List<UIComponent> components = null;
     public int lastW = 0, lastH = 0;
 
     public ScreenBase(ScreenBridge bridge) {
@@ -22,9 +22,14 @@ public class ScreenBase extends Screen {
     }
 
     @Override
+    protected void init() {
+        this.bridge.init();
+    }
+
+    @Override
     public void render(PoseStack arg0, int arg1, int arg2, float arg3) {
         super.renderBackground(arg0);
-        if(lastW != width || lastH != height) {
+        if (lastW != width || lastH != height) {
             this.lastH = height;
             this.lastW = width;
             this.bridge.width = super.width;
@@ -32,9 +37,9 @@ public class ScreenBase extends Screen {
             this.components = this.bridge.renderComponents();
         }
 
-        if(components == null) this.components = this.bridge.renderComponents();
+        if (components == null) this.components = this.bridge.renderComponents();
 
-        this.bridge.render(arg1, arg2, left, right, middle);
+        this.bridge.render(arg0, arg1, arg2, left, right, middle);
 
         SimplexClient.getInstance().getRenderer().start();
         this.components.forEach(t -> t.render(arg1, arg2));
@@ -56,13 +61,13 @@ public class ScreenBase extends Screen {
     @Override
     public boolean mouseClicked(double arg0, double arg1, int arg2) {
         this.bridge.mouseButtonClick(arg2 != 0, true, arg0, arg1);
-        if(arg2 == 0) {
+        if (arg2 == 0) {
             left = true;
             this.components.forEach(t -> t.onLeftMouse(true, arg0, arg1));
-        } else if(arg2 == 1) {
+        } else if (arg2 == 1) {
             right = true;
             this.components.forEach(t -> t.onRightMouse(true, arg0, arg1));
-        } else if(arg2 == 2) {
+        } else if (arg2 == 2) {
             middle = true;
             this.components.forEach(t -> t.onMiddleMouse(true, arg0, arg1));
         }
@@ -73,13 +78,13 @@ public class ScreenBase extends Screen {
     @Override
     public boolean mouseReleased(double p_94722_, double p_94723_, int p_94724_) {
         this.bridge.mouseButtonClick(p_94724_ != 0, false, p_94722_, p_94723_);
-        if(p_94724_ == 0) {
+        if (p_94724_ == 0) {
             left = false;
             this.components.forEach(t -> t.onLeftMouse(false, p_94722_, p_94723_));
-        } else if(p_94724_ == 1) {
+        } else if (p_94724_ == 1) {
             right = false;
             this.components.forEach(t -> t.onRightMouse(false, p_94722_, p_94723_));
-        } else if(p_94724_ == 2) {
+        } else if (p_94724_ == 2) {
             middle = false;
             this.components.forEach(t -> t.onMiddleMouse(false, p_94722_, p_94723_));
         }
@@ -89,8 +94,14 @@ public class ScreenBase extends Screen {
 
     @Override
     public boolean mouseScrolled(double p_94686_, double p_94687_, double p_94688_) {
-        this.components.forEach(t -> t.onScroll(p_94688_ == -1 ? GuiComponent.Scroll.DOWN : GuiComponent.Scroll.UP, p_94686_, p_94687_));
+        this.components.forEach(t -> t.onScroll(p_94688_ == -1 ? UIComponent.Scroll.DOWN : UIComponent.Scroll.UP, p_94686_, p_94687_));
 
         return super.mouseScrolled(p_94686_, p_94687_, p_94688_);
+    }
+
+    @Override
+    public void onClose() {
+        this.bridge.onClose();
+        super.onClose();
     }
 }

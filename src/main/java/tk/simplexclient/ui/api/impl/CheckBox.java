@@ -1,10 +1,10 @@
 package tk.simplexclient.ui.api.impl;
 
-import tk.simplexclient.ui.api.GuiComponent;
+import tk.simplexclient.ui.api.UIComponent;
 
 import java.awt.*;
 
-public abstract class CheckBox extends GuiComponent {
+public abstract class CheckBox extends UIComponent {
     public String text;
     public boolean wasOpened = false;
 
@@ -15,14 +15,14 @@ public abstract class CheckBox extends GuiComponent {
 
     @Override
     public void render(double mouseX, double mouseY) {
-        this.vr.drawRectangle(
+        this.renderer.drawRectangle(
                 x,
                 y,
                 (float) endX - x,
                 (float) endY - y,
                 new Color(36, 35, 35,120));
-        this.vr.drawString(text, endX, y + (((endY - y) / 2) - (this.vr.getStringWidth(text)[1] / 2)), new Color(-1));
-        this.vr.drawString(wasOpened ? "+" : "X", x, y + (((endY - y) / 2) - (this.vr.getStringWidth(wasOpened ? "+" : "X")[1] / 2)), new Color(-1));
+        this.renderer.drawString(text, endX, y + (((endY - y) / 2) - (this.renderer.getStringWidth(text)[1] / 2)), new Color(-1));
+        this.renderer.drawString(wasOpened ? "+" : "X", x, y + (((endY - y) / 2) - (this.renderer.getStringWidth(wasOpened ? "+" : "X")[1] / 2)), new Color(-1));
     }
 
     @Override
