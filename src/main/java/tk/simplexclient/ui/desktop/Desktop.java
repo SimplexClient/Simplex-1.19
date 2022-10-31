@@ -51,7 +51,7 @@ public class Desktop extends Screen {
             application.setPos(x, y);
             application.x = application.pos[0];
             application.y = application.pos[1] + 15;
-
+            application.setPos(mouseX + application.getPos()[0] - prevX, mouseY + application.getPos()[1] - prevY);
             prevX = mouseX;
             prevY = mouseY;
         });
@@ -73,6 +73,12 @@ public class Desktop extends Screen {
                     ).findFirst();
         }
         apps.forEach(application -> application.mouseClicked(mouseX, mouseY, mouseButton));
+                            mouseX >= application.getPos()[0]
+                                    && mouseX <= application.getPos()[0] + application.getWidth()
+                                    && mouseY >= application.getPos()[1]
+                                    && mouseY <= application.getPos()[1] + 15
+                    ).findFirst();
+        }
         return super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 

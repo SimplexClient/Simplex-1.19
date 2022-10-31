@@ -26,6 +26,8 @@ public class App {
 
     @Getter
     protected final int appWidth, appHeight;
+    
+    private final int width, height;
 
     @Getter
     private final ResourceLocation icon;
@@ -38,6 +40,12 @@ public class App {
 
     protected final Renderer renderer;
 
+    private Minecraft minecraft;
+
+    private final int guiWidth, guiHeight;
+
+    private final Renderer renderer;
+
     @Setter
     public boolean shadow = true;
 
@@ -48,6 +56,9 @@ public class App {
     public int[] pos = new int[]{};
 
     public int x, y;
+
+    @Getter
+    private int[] pos = new int[]{};
 
     /**
      * Initializes all the needed variables for the application
@@ -67,12 +78,14 @@ public class App {
         this.appHeight = height;
         this.width = width;
         this.height = height - 15;
+        this.width = width;
+        this.height = height;
         this.icon = icon;
         this.minecraft = Minecraft.getInstance();
         this.guiWidth = minecraft.getWindow().getGuiScaledWidth();
         this.guiHeight = minecraft.getWindow().getGuiScaledHeight();
         this.renderer = SimplexClient.getInstance().getRenderer();
-        this.setPosition();
+        this.setPosition();r
         this.x = pos[0];
         this.y = pos[1] + 20;
     }
@@ -94,6 +107,8 @@ public class App {
         this.appHeight = height;
         this.width = width;
         this.height = height - 15;
+        this.width = width;
+        this.height = height;
         this.icon = new ResourceLocation("simplex/textures/icons/applications/default.png");
         this.minecraft = Minecraft.getInstance();
         this.guiWidth = minecraft.getWindow().getGuiScaledWidth();
@@ -129,6 +144,19 @@ public class App {
             renderer.drawStringScaled(name,
                     (float) pos[0] + (float) (appWidth / 2) - (titleSize[0] / 2),
                     (float) pos[1] + 7.5f - (titleSize[1] / 2),
+                renderer.drawRoundedRectWithShadow((float) getPos()[0], (float) getPos()[1], width, height, 5, 1, color);
+            } else {
+                renderer.drawRoundedRectangle((float) getPos()[0], (float) getPos()[1], width, height, 5, color);
+            }
+            //renderer.drawRectangle((float) getPos()[0], (float) getPos()[1], width, 15, Color.WHITE);
+            renderer.drawCircle((float) getPos()[0] + 10, (float) getPos()[1] + 7.5f, 2.5f, new Color(255, 80, 80));
+            renderer.drawCircle((float) getPos()[0] + 17.5f, (float) getPos()[1] + 7.5f, 2.5f, new Color(255, 188, 0));
+            renderer.drawCircle((float) getPos()[0] + 25, (float) getPos()[1] + 7.5f, 2.5f, new Color(0, 205, 32));
+
+            float[] titleSize = renderer.getStringWidth(name, 6.5f, "inter");
+            renderer.drawStringScaled(name,
+                    (float) getPos()[0] + (float) (width / 2) - (titleSize[0] / 2),
+                    (float) getPos()[1] + 7.5f - (titleSize[1] / 2),
                     6.5f, new Color(232, 232, 232), "inter");
         }
         renderer.end();
@@ -165,6 +193,15 @@ public class App {
             case TOP_RIGHT -> pos = new int[]{guiWidth - appWidth, 0};
             case BOTTOM_LEFT -> pos = new int[]{0, guiHeight - appHeight};
             case BOTTOM_RIGHT -> pos = new int[]{guiWidth - appWidth, guiHeight - appHeight};
+            case CENTER -> pos = new int[]{(guiWidth / 2) - (width / 2), (guiHeight / 2) - (height / 2)};
+            case CENTER_LEFT -> pos = new int[]{0, (guiHeight / 2) - (height / 2)};
+            case CENTER_RIGHT -> pos = new int[]{guiWidth - width, (guiHeight / 2) - (height / 2)};
+            case CENTER_TOP -> pos = new int[]{(guiWidth / 2) - (width / 2), 0};
+            case CENTER_BOTTOM -> pos = new int[]{(guiWidth / 2) - (width / 2), guiHeight - height};
+            case TOP_LEFT -> pos = new int[]{0, 0};
+            case TOP_RIGHT -> pos = new int[]{guiWidth - width, 0};
+            case BOTTOM_LEFT -> pos = new int[]{0, guiHeight - height};
+            case BOTTOM_RIGHT -> pos = new int[]{guiWidth - width, guiHeight - height};
         }
     }
 
