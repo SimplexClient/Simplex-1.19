@@ -1,6 +1,8 @@
 package tk.simplexclient.module;
 
 import lombok.Getter;
+import tk.simplexclient.event.EventTarget;
+import tk.simplexclient.event.impl.RenderEvent;
 import tk.simplexclient.renderer.Renderable;
 
 public class HUDModule extends Module {
@@ -24,6 +26,11 @@ public class HUDModule extends Module {
             renderable.reset();
             getRenderable().renderWithXY(x, y);
         }
+    }
+
+    @EventTarget
+    public void render(RenderEvent e){
+        render();
     }
 
     public void setPosition(int[] position) {

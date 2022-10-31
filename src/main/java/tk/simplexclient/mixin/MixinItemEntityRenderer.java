@@ -40,6 +40,9 @@ import java.util.Random;
     nyami said "item physics"
     https://canary.discord.com/channels/871722190649835540/961927554141392916/1036002936192499782
  */
+/*
+    credit: https://github.com/Draylar/better-dropped-items/tree/1.19/src/main/java/dev/draylar/bdi/mixin
+ */
 @Mixin(value = ItemEntityRenderer.class)
 public abstract class MixinItemEntityRenderer extends EntityRenderer<ItemEntity> {
     @Shadow @Final private RandomSource random;

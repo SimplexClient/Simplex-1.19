@@ -4,12 +4,15 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.screens.OptionsScreen;
+import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.nanovg.NanoVG;
 import tk.simplexclient.SimplexClient;
 import tk.simplexclient.ui.api.ScreenBridge;
 import tk.simplexclient.ui.api.UIComponent;
+import tk.simplexclient.ui.api.impl.ButtonComponent;
 
 import java.awt.*;
 import java.util.List;

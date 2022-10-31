@@ -8,6 +8,7 @@ import lombok.Setter;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.nanovg.NanoVGGL3;
+import tk.simplexclient.event.EventBus;
 import tk.simplexclient.module.ModuleManager;
 import tk.simplexclient.module.config.ModuleConfig;
 import tk.simplexclient.renderer.GLState;
@@ -51,6 +52,9 @@ public class SimplexClient {
     @Getter
     private ScreenBridge mainMenu;
 
+    @Getter
+    private EventBus bus;
+
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
 
     public void init() {
@@ -68,6 +72,7 @@ public class SimplexClient {
         instance = this;
         vg = NanoVGGL3.nvgCreate(NanoVGGL3.NVG_ANTIALIAS | NanoVGGL3.NVG_STENCIL_STROKES);
 
+        bus = new EventBus(this);
         mainMenu = new MainMenuScreen();
         glState = new GLState();
         renderer = new Renderer(vg);
