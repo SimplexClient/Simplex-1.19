@@ -25,13 +25,13 @@ public class Desktop extends Screen {
     public Desktop(boolean showBackground) {
         super(Component.nullToEmpty(""));
         this.showBackground = showBackground;
-
     }
 
     @Override
     protected void init() {
         apps.clear();
         apps.add(new TestApp());
+        apps.forEach(App::init);
     }
 
     @Override
@@ -39,6 +39,18 @@ public class Desktop extends Screen {
         super.renderBackground(poseStack);
         apps.forEach(application -> application.renderApplication(poseStack, mouseX, mouseY));
         selected.ifPresent(application -> {
+            int x = mouseX + application.pos[0] - prevX;
+            int y = mouseY + application.pos[1] - prevY;
+
+            if (mouseX >= width || mouseX <= 0) {
+                x = application.pos[0];
+            } else if (mouseY >= height || mouseY <= 0) {
+                y = application.pos[1];
+            }
+
+            application.setPos(x, y);
+            application.x = application.pos[0];
+            application.y = application.pos[1] + 15;
             application.setPos(mouseX + application.getPos()[0] - prevX, mouseY + application.getPos()[1] - prevY);
             prevX = mouseX;
             prevY = mouseY;
@@ -54,6 +66,13 @@ public class Desktop extends Screen {
 
             selected = apps.stream()
                     .filter(application ->
+                            mouseX >= application.pos[0]
+                                    && mouseX <= application.pos[0] + application.getAppWidth()
+                                    && mouseY >= application.pos[1]
+                                    && mouseY <= application.pos[1] + 15
+                    ).findFirst();
+        }
+        apps.forEach(application -> application.mouseClicked(mouseX, mouseY, mouseButton));
                             mouseX >= application.getPos()[0]
                                     && mouseX <= application.getPos()[0] + application.getWidth()
                                     && mouseY >= application.getPos()[1]
@@ -64,10 +83,17 @@ public class Desktop extends Screen {
     }
 
     @Override
+    public boolean mouseDragged(double d, double e, int i, double f, double g) {
+        apps.forEach(application -> application.mouseDragged(d, e, i, f, g));
+        return super.mouseDragged(d, e, i, f, g);
+    }
+
+    @Override
     public boolean mouseReleased(double d, double e, int i) {
         selected = Optional.empty();
         prevX = 0;
         prevY = 0;
+        apps.forEach(application -> application.mouseReleased(d, e, i));
         return super.mouseReleased(d, e, i);
     }
 }
