@@ -7,8 +7,7 @@ import java.util.List;
 
 public abstract class ScreenBridge {
     public int width, height;
-
-    public List<UIComponent> components;
+    public ScreenBase currentScreenBase;
 
     public void init() {}
 
@@ -30,4 +29,8 @@ public abstract class ScreenBridge {
     }
 
     public void onClose() {}
+
+    public void reloadComponents() {
+        this.currentScreenBase.components = this.renderComponents();
+    }
 }

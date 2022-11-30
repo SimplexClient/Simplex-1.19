@@ -109,8 +109,8 @@ public class Renderer {
     public void drawOutline(float x, float y, float width, float height, Color color) {
         NanoVG.nvgBeginPath(vg);
         NanoVG.nvgRect(vg, x, y, width, height);
-        NanoVG.nvgFillColor(vg, new tk.simplexclient.renderer.Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).toNVGColor());
-        NanoVG.nvgFill(vg);
+        NanoVG.nvgStrokeColor(vg, new tk.simplexclient.renderer.Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).toNVGColor());
+        NanoVG.nvgStroke(vg);
     }
 
     public void drawRoundedRectWithShadow(float x, float y, float width, float height, float radius, float shadowSize, Color color) {
