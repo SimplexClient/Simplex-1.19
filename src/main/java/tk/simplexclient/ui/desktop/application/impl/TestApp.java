@@ -4,11 +4,14 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import tk.simplexclient.ui.desktop.application.App;
 import tk.simplexclient.ui.desktop.application.EnumAppButtons;
 import tk.simplexclient.ui.desktop.application.EnumAppPosition;
+import tk.simplexclient.utils.Util;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.net.URL;
 
 public class TestApp extends App {
-
     public TestApp() {
         super("Rendering Test App", EnumAppPosition.CENTER, EnumAppButtons.CLOSE_MINIMIZE_MAXIMIZE, 200, 150);
     }
@@ -23,11 +26,8 @@ public class TestApp extends App {
             renderer.drawRectangle(x + (width / 2), y + (height / 2), 20, 20, Color.WHITE);
         }
         renderer.end();
-        super.render(poseStack, mouseX, mouseY);
     }
 
     @Override
-    public void mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-    }
+    public void mouseClicked(double mouseX, double mouseY, int mouseButton) { }
 }

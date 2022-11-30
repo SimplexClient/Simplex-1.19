@@ -38,7 +38,7 @@ repositories {
 	maven {
 		url "https://jitpack.io/"
 	}
-    mavenCentral()
+	mavenCentral()
 }
 
 for (def runConfig : LoomGradleExtension.get(project).getRunConfigs()) {

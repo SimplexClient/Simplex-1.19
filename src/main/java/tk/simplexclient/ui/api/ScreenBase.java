@@ -23,6 +23,7 @@ public class ScreenBase extends Screen {
 
     @Override
     protected void init() {
+        this.bridge.currentScreenBase = this;
         this.bridge.init();
     }
 
@@ -60,6 +61,9 @@ public class ScreenBase extends Screen {
 
     @Override
     public boolean mouseClicked(double arg0, double arg1, int arg2) {
+        if(this.components == null)
+            return super.mouseClicked(arg0, arg1, arg2);
+
         this.bridge.mouseButtonClick(arg2 != 0, true, arg0, arg1);
         if (arg2 == 0) {
             left = true;

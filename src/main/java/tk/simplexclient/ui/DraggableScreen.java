@@ -46,7 +46,8 @@ public class DraggableScreen extends ScreenBridge {
                 Renderable rend = hud.getRenderable();
                     if (rend.equals(movingMod) || !hud.isEnabled())
                         continue;
-
+                    int oldFinalX = finalX;
+                    int oldFinalY = finalY;
                     if (mouseX >= (rend.x - 5) & mouseX <= (rend.x + rend.getWidth() + 5)) {
                         if(showSnapLines){
                             boolean shouldRenderplusHeight = (rend.y < movingMod.y);
@@ -72,6 +73,10 @@ public class DraggableScreen extends ScreenBridge {
                                     height, 1, new Color(255, 255, 255));
                         }
                         finalY = rend.y;
+                    }
+
+                    if(oldFinalY != finalY || oldFinalX != finalX) {
+                        break; //Make mods only snap to a single mod
                     }
                 }
 
@@ -142,11 +147,12 @@ public class DraggableScreen extends ScreenBridge {
     }
 
     public void renderDebugMenu() {
-        if(this.showDividerLines){
-            SimplexClient.getInstance().getRenderer().drawRectangle(0, (float) height / 2 - 0.5f, width, 1, Color.WHITE);
-            SimplexClient.getInstance().getRenderer().drawRectangle((float) width / 2 - 0.5f, 0, 1, height, Color.WHITE);
-        }
         Renderer renderer = SimplexClient.getInstance().getRenderer();
+
+        if(this.showDividerLines){
+            renderer.drawRectangle(0, (float) height / 2 - 0.5f, width, 1, Color.WHITE);
+            renderer.drawRectangle((float) width / 2 - 0.5f, 0, 1, height, Color.WHITE);
+        }
 
         //Render
         renderer.drawRoundedRectangle(width - 100, 2, 98, 100, 3, new Color(255,255,255,70));
